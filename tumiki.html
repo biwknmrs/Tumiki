@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>-Tumiki-</title>
+		<style type="text/css">
+		
+/* canvasの背景を設定 */
+#canvas-container canvas{
+	//background: url(./phone.gif) no-repeat !important;
+	//background-position: center center !important;
+}
+</style>
+<script src="matter-0.8.0.min.js"></script>
+		<script src="html2canvas.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script language="javascript" type="text/javascript">
+<!--
+
+//物理演算
+var Engine = Matter.Engine,
+Gui = Matter.Gui,
+World = Matter.World,
+Body = Matter.Body,
+Bodies = Matter.Bodies,
+Constraint = Matter.Constraint,
+Composites = Matter.Conposites,
+Common = Matter.Common,
+Vertices = Matter.Vertices,
+MouseConstraint = Matter.MouseConstraint;
+
+var container;
+var options;
+var engine;
+var world;
+var renderOptions;
+
+var ball;
+//var i=0;
+
+function Start() {
+	container = document.getElementById('canvas-container');
+
+	//描画域を作成(描画したいDOM,オプションを読み込む)
+	engine = Engine.create(container, options);
+	world = engine.world;
+	renderOptions = engine.render.options;
+	renderOptions.wireframes = false;
+	
+	clear();
+	
+	circle();
+	tri();
+	squ();
+	rec();
+	
+	//実行
+	Engine.run(engine);
+
+}
+
+function clear(){
+	
+	World.clear(world);
+	Engine.clear(engine);
+	
+	//矩形で枠線を作る(rectangle(x座標,y座標,横幅,縦幅,option))
+	World.add(world, [
+		Bodies.rectangle(400, 5, 800, 10, {isStatic: true}),//天井
+		Bodies.rectangle(795, 300, 10, 600, {isStatic: true}),//右壁
+		Bodies.rectangle(5, 300, 10, 600, {isStatic: true}),//左壁
+		Bodies.rectangle(400, 595, 800, 10, {isStatic: true})//床
+	]);
+	
+	//mouse操作
+	var mouseConstraint = MouseConstraint.create(engine);
+	World.add(engine.world, mouseConstraint);
+}
+
+function circle() {
+	ball = Bodies.circle(Math.random()*790 + 10,
+	Math.random()*590 + 10, 30, {render: {fillStyle: '#e4e429'}
+	});
+	World.add(world, ball);
+}
+function tri() {
+	ball = Bodies.polygon(Math.random()*790 + 10,
+	Math.random()*590 + 10, 3, 50, {render: {fillStyle: '#e394ba'}
+	});
+	World.add(world, ball);
+}
+function squ() {
+	ball = Bodies.rectangle(Math.random()*790 + 10,
+	Math.random()*590 + 10, 50, 50, {render: {fillStyle: '#75a1d8'}
+	});
+	World.add(world, ball);
+}
+function rec() {
+	ball = Bodies.rectangle(Math.random()*790 + 10,
+	Math.random()*590 + 10, 50, 100, {render: {fillStyle: '#3CB371'}
+	});
+	World.add(world, ball);
+}
+
+//スクリーンショット
+function screenshot( selector) {
+    var element = $(selector)[0];
+    html2canvas(element, { onrendered: function(canvas) {
+        var imgData = canvas.toDataURL();
+        $('#screen_image')[0].src = imgData;
+        $('#download')[0].href = imgData;
+        $('#download')[0].innerHTML = "Download";
+		}});
+	//i++;
+}
+
+
+//-->
+</SCRIPT>
+</head>
+
+
+<body onload='Start()'>
+
+<div id="canvas-container"></div>
+		<input type="button" value="circle" onclick="circle()">
+		<input type="button" value="triangle" onclick="tri()">
+		<input type="button" value="square" onclick="squ()">
+		<input type="button" value="rectangle" onclick="rec()">
+		
+		
+		<button onclick="screenshot('#canvas-container')">Take a shot</button>
+		<a id="download" href="#" download="file.jpg"><img id="screen_image"></a>
+		
+		
+		<form action="Regist.php" method="post" enctype="multipart/form-data">
+			<input type="file" name="img-file" size="40" />
+			<input type="hidden" name="MAX_FILE_SIZE" value="4294967296">
+		<input type="submit" value="upload">
+		
+		<a href="show.php">作品</a>
+		</form>
+
+</body>
+</html>
